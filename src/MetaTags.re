@@ -30,8 +30,8 @@ module Make = (()) : Interface => {
   let a = {map: PairsMap.empty};
   let transform_all = f =>
     PairsMap.bindings(a.map)
-    |> List.map((((key, _type), content)) => f(key, _type, content))
-    |> Array.of_list;
+    ->Belt.List.map((((key, _type), content)) => f(key, _type, content))
+    ->Belt.List.toArray;
   let set_metadata = (key, content, _type) => {
     a.map = PairsMap.add((key, _type), content, a.map);
     Dom.updateMetaTag(key, content, _type);
