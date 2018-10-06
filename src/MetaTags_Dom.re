@@ -8,29 +8,27 @@ type document;
 
 type element;
 
-[@bs.val] external document : document = "";
+[@bs.val] external document: document = "";
+
+[@bs.val] external querySelector: string => element = "document.querySelector";
+
+[@bs.val] external createElement: string => element = "document.createElement";
+
+[@bs.send] external appendChild: (element, element) => unit = "";
+
+[@bs.send] external setAttribute: (element, string, string) => unit = "";
+
+[@bs.send] external getAttribute: (element, string) => string = "";
+
+[@bs.send] external hasOwnProperty: ('a, string) => bool = "";
 
 [@bs.val]
-external querySelector : string => element = "document.querySelector";
-
-[@bs.val]
-external createElement : string => element = "document.createElement";
-
-[@bs.send] external appendChild : (element, element) => unit = "";
-
-[@bs.send] external setAttribute : (element, string, string) => unit = "";
-
-[@bs.send] external getAttribute : (element, string) => string = "";
-
-[@bs.send] external hasOwnProperty : ('a, string) => bool = "";
-
-[@bs.val]
-external getElementsByTagName : string => array(element) =
+external getElementsByTagName: string => array(element) =
   "document.getElementsByTagName";
 
-[@bs.set] external set_innerHTML : (element, string) => unit = "innerHTML";
+[@bs.set] external set_innerHTML: (element, string) => unit = "innerHTML";
 
-[@bs.set] external set_title : (document, string) => unit = "title";
+[@bs.set] external set_title: (document, string) => unit = "title";
 
 let elementExists: string => bool = [%bs.raw
   {|
@@ -50,15 +48,15 @@ let clientSide: unit => bool = [%bs.raw
 
 let getOrCreateMeta = (key, value) => {
   let selector = "meta[" ++ key ++ "='" ++ value ++ "']";
-  if (elementExists(selector)) {
-    querySelector(selector);
-  } else {
-    let meta = createElement("meta");
-    setAttribute(meta, key, value);
-    let head = getElementsByTagName("head")[0];
-    appendChild(head, meta);
-    meta;
-  };
+  elementExists(selector) ?
+    querySelector(selector) :
+    {
+      let meta = createElement("meta");
+      setAttribute(meta, key, value);
+      let head = getElementsByTagName("head")[0];
+      appendChild(head, meta);
+      meta;
+    };
 };
 
 let createTagInHead = tagname => {
@@ -69,14 +67,14 @@ let createTagInHead = tagname => {
 };
 
 let getOrCreateTagInHead = tagname =>
-  if (elementExists(tagname)) {
-    querySelector(tagname);
-  } else {
-    let el = createElement(tagname);
-    let head = getElementsByTagName("head")[0];
-    appendChild(head, el);
-    el;
-  };
+  elementExists(tagname) ?
+    querySelector(tagname) :
+    {
+      let el = createElement(tagname);
+      let head = getElementsByTagName("head")[0];
+      appendChild(head, el);
+      el;
+    };
 
 let metadata_typeToString =
   fun
@@ -86,15 +84,12 @@ let metadata_typeToString =
   | Title => "title";
 
 let updateMetaTag = (key, content, _type) =>
-  if (clientSide()) {
+  clientSide() ?
     setAttribute(
       getOrCreateMeta(metadata_typeToString(_type), key),
       "content",
       content,
-    );
-  };
+    ) :
+    ();
 
-let updateTitle = title =>
-  if (clientSide()) {
-    set_title(document, title);
-  };
+let updateTitle = title => clientSide() ? set_title(document, title) : ();
