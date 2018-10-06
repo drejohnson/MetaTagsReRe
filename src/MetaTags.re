@@ -53,6 +53,7 @@ module Make = (()) : Interface => {
     Dom.updateTitle(title);
     set_metadata("", title, Title);
     set_metadata("og:title", title, Property);
+    set_metadata("twitter:title", title, Name);
   };
   let url = () => get_metadata("og:url", Property);
   let set_url = url => set_metadata("og:url", url, Property);
