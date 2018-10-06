@@ -1,9 +1,20 @@
 {
   "name": "meta-tags-re-re",
   "version": "0.2.1",
-  "main": "index.js",
   "author": "Yehonathan Sharvit",
   "license": "MIT",
+  "keywords": [
+    "Reason",
+    "React",
+    "document",
+    "head",
+    "title",
+    "meta",
+    "metatag",
+    "metatags",
+    "opengraph",
+    "seo"
+  ],
   "devDependencies": {
     "@glennsl/bs-jest": "^0.4.4",
     "bs-enzyme": "0.5.1",
