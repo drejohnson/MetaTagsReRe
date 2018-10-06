@@ -10,7 +10,7 @@ module Make = (MetaTags: MetaTags.Interface) => {
   };
 };
 
-let listItems = wrapper => wrapper |> Enzyme.children;
+let listItems = wrapper => wrapper |> Enzyme.Shallow.children;
 
 describe("MetaTagsMetaTags", () =>
   test("render when only title is defined", () => {
@@ -21,7 +21,7 @@ describe("MetaTagsMetaTags", () =>
     MetaTags.set_description("desc");
     module Context = Make(MetaTags);
     let wrapper = Context.setup();
-    let expectedNode = <title> (ReasonReact.string(title)) </title>;
-    expect(Enzyme.contains(expectedNode, wrapper)) |> toBe(true);
+    let expectedNode = <title> {ReasonReact.string(title)} </title>;
+    expect(Enzyme.Shallow.contains(expectedNode, wrapper)) |> toBe(true);
   })
 );
